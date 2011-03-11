@@ -90,7 +90,7 @@ int main(void)
 {  
    /*
     This is the Professor's test code. Scores were either pass 
-    or fail depending if on the test code result and on the 
+    or fail depending on the test code result and on the 
     time complexity of the program.
    */
    int i,j,k,l;
