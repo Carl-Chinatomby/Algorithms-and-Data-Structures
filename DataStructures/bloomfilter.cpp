@@ -19,6 +19,8 @@ This Structure must support the following operations:
    bloom filter *b.
  * int is_element(bf_t *b, char *q) returns 1 if the string *q is accepted
    by the bloom filter, and 0 else. 
+
+Comments: Used a freelist for allocation/deallocation
 */
 
 #include <iostream>

@@ -1,14 +1,51 @@
 /*
-//The Linear Order Tree as Described in Section 6.5 of Advanced Data Structures By Peter Brass
-//This implementation is not the same as described in the book and is slightly slower
+The Linear Order Tree as Described in Section 6.5 of Advanced Data Structures 
+By Peter Brass. This implementation is not the same as described in the book 
+and is only slightly slower
 By Carl Chinatomby
 Fall 2010
+
+Assignment:
+Implement a structure that mains a linear order, based on chapter 6.5 of 
+the book. A linear order is a structure where you can define sets to 
+have it's own order for instance apple > banana > orange or you can redefine
+numeric types where 3 > 7 > 2 > 9 > 11
+
+The structure must support the following operations:
+ * o_t* create_order() creates an empty linear order set
+ * void insert_before(o_t *ord, key_t a, key_t b) inserts the key a 
+   immediately before key b in the ordered set.
+ * void insert_after(o_t *ord, key_t a, key_t b) inserts the key a
+   immediately after key b in the ordered set. 
+ * void insert_top(o_t *ord, key_t a) inserts the key a as largest
+   element in the ordered set
+ * void insert_bottom(o_t *ord, key_t a) inserts the key a as the 
+   smallest element in the ordered set
+ * void delete(o_t *ord, key_t a) deletes the key a from the ordered set
+ * void compare(o_t *ord, key_t a, key_t b) returns 1 if key a occurs
+   before key b in the order set, 0 else.
+
+Here key_t is a number type that allows comparisons.
+
+Comments: A freelist is used for allocation/deallocation. All search trees
+are implemented using the leaf model. I use a binary search tree to optimize
+searching which i denote as an order tree. The object that the leafs are 
+bounded to is the bottom of another tree which i denote as the linear order tree.
+The linear order tree nodes are doubly linked and so can be traversed upward
+and downward. To compare two nodes, we need to find their respective nodes in 
+the order tree and then use that to get to the linear order tree. From there
+we traverse upward (towards root) of the linear order tree for both nodes 
+and when we find a parent of both nodes we determine which node was from the
+left subtree and which one was from the right subtree. The left subtree node
+is the smaller node. This system works correctly as long as it is maintained
+in all insertions and rotations. 
+ 
 */
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 
-typedef long key_t; //THIS LINE NEEDS TO BE COMMENTED OUT FOR G++ ON UBUNTU 10.04
+//typedef long key_t; //THIS LINE NEEDS TO BE COMMENTED OUT FOR G++ ON UBUNTU 10.04, REQUIRED FOR VISUAL STUDIO 2010
 
 #define BLOCKSIZE 256
 #define INF LONG_MAX;
@@ -44,18 +81,14 @@ int    ot_size_left;
 o_t *otfree_list = NULL;
 
 //linear order tree freelist functions
-l_o_t *get_node()
-{ 
+l_o_t *get_node(){ 
 	l_o_t *tmp;
-	if( free_list != NULL )
-	{  
+	if( free_list != NULL ){  
 		tmp = free_list;
 		free_list = free_list->left;
 	}
-	else
-	{ 
-		if( currentblock == NULL || size_left == 0)
-		{  
+	else{ 
+		if( currentblock == NULL || size_left == 0){  
 			currentblock = 
 				(l_o_t *) malloc( BLOCKSIZE * sizeof(l_o_t) );
 			size_left = BLOCKSIZE;
@@ -66,25 +99,21 @@ l_o_t *get_node()
 	return( tmp );
 }
 
-void return_node(l_o_t *node)
-{  
+void return_node(l_o_t *node){  
 	node->left = free_list;
 	free_list = node;
 }
 
 //order tree freelist functions
-o_t *get_ot_node()
-{ 
+o_t *get_ot_node(){ 
 	o_t *tmp;
-	if( otfree_list != NULL )
-	{  
+	if( otfree_list != NULL ){  
 		tmp = otfree_list;
 		otfree_list = otfree_list->left;
 	}
 	else
 	{ 
-		if( currentotblock == NULL || ot_size_left == 0)
-		{  
+		if( currentotblock == NULL || ot_size_left == 0){  
 			currentotblock = 
 				(o_t *) malloc( BLOCKSIZE * sizeof(o_t) );
 			ot_size_left = BLOCKSIZE;
@@ -209,15 +238,13 @@ void rebalance(o_t* path_stack[], int path_st_p){
 				tmp_node->height = tmp_height + 2; 
 			}
 		}
-		else if ( tmp_node->left->height - tmp_node->right->height == -2 )
-		{  
+		else if ( tmp_node->left->height - tmp_node->right->height == -2 ){  
 			if( tmp_node->right->right->height - tmp_node->left->height == 1 ){  
 				left_rotation( tmp_node );
 			tmp_node->left->height = tmp_node->left->right->height + 1;
 			tmp_node->height = tmp_node->left->height + 1;
 			}
-			else
-			{  
+			else{  
 				right_rotation( tmp_node->right );
 				left_rotation( tmp_node );
 				tmp_height = tmp_node->right->right->height; 
@@ -226,8 +253,7 @@ void rebalance(o_t* path_stack[], int path_st_p){
 				tmp_node->height = tmp_height + 2; 
 			}
 		}
-		else /* update height even if there was no rotation */ 
-		{  
+		else /* update height even if there was no rotation */ {  
 			if( tmp_node->left->height > tmp_node->right->height )
 				tmp_node->height = tmp_node->left->height + 1;
 			else
@@ -296,16 +322,13 @@ void l_o_t_rebalance(l_o_t* tree){
 		int tmp_height, old_height;
 		tmp_node = tmp_node->parent;
 		old_height= tmp_node->height;
-		if( tmp_node->left->height - tmp_node->right->height == 2 )
-		{  
-			if( tmp_node->left->left->height - tmp_node->right->height == 1 )
-			{  
+		if( tmp_node->left->height - tmp_node->right->height == 2 ){  
+			if( tmp_node->left->left->height - tmp_node->right->height == 1 ){  
 				lot_right_rotation( tmp_node );
 				tmp_node->right->height = tmp_node->right->left->height + 1;
 				tmp_node->height = tmp_node->right->height + 1;
 			}
-			else
-			{  
+			else{  
 				lot_left_rotation( tmp_node->left );
 				lot_right_rotation( tmp_node );
 				tmp_height = tmp_node->left->left->height; 
@@ -314,16 +337,13 @@ void l_o_t_rebalance(l_o_t* tree){
 				tmp_node->height = tmp_height + 2; 
 			}
 		}
-		else if ( tmp_node->left->height -  tmp_node->right->height == -2 )
-		{  
-			if( tmp_node->right->right->height -  tmp_node->left->height == 1 )
-			{  
+		else if ( tmp_node->left->height -  tmp_node->right->height == -2 ){  
+			if( tmp_node->right->right->height -  tmp_node->left->height == 1 ){  
 				lot_left_rotation( tmp_node );
 				tmp_node->left->height =  tmp_node->left->right->height + 1;
 				tmp_node->height = tmp_node->left->height + 1;
 			}
-			else
-			{ 
+			else{ 
 				lot_right_rotation( tmp_node->right );
 				lot_left_rotation( tmp_node );
 				tmp_height = tmp_node->right->right->height; 
@@ -332,8 +352,7 @@ void l_o_t_rebalance(l_o_t* tree){
 				tmp_node->height = tmp_height + 2; 
 			}
 		}
-		else /* update height even if there was no rotation */ 
-		{  
+		else /* update height even if there was no rotation */ {  
 			if( tmp_node->left->height > tmp_node->right->height )
 				tmp_node->height = tmp_node->left->height + 1;
 			else
@@ -693,6 +712,11 @@ long p(long q)
 }
 
 int main(){
+   /*
+    This is the professor's test code. Scores were either pass
+    or fail depending on succession of the test code and time
+    complexity of the program. 
+   */
 	long i; o_t *o; 
    printf("starting \n");
    o = create_order();
