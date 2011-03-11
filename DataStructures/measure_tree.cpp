@@ -2,6 +2,36 @@
 The Measure Tree as Described in Section 4.3 of Advanced Data Structures By Peter Brass
 By Carl Chinatomby
 Fall 2010
+
+Assignment: Implement the measure tree, as described in teh book chapter 4.3.
+The measure tree is a dynamic structure that maintains a system of intervals
+under insertion and deletion, and can answer the query: give the total length
+of the union of the current intervals.
+
+So the structure should support the following operations:
+ * m_tree_t * create_m_tree() creates an empty measure tree
+ * void insert_interval(m_tree_t *tree, int a, int b) inserts the 
+   interval [a,b[.
+ * void delete_interval(m_tree_t *tree, int a, int b) deletes the
+   interval [a,b[. if it exists.
+ * int query_length(m_tree *tree) returns the length of the union of
+   all intervals in the current set.
+
+Comments: Two freelists are used. The height balance search tree is also used.
+All trees are implemented using the leaf method. The object of the first tree
+is actually the root of another height balance search tree to keep track of the count. 
+Duplicate measures are allowed and are tracked. When traversing the first tree,
+each node represents an endpoint. the object of that node is the a tree that
+denotes the opposite endpoint of that node interval. For instance inserting 
+intervals (3, 6), (3, 5), (3, 7), (1, 3), (2, 3) would produce a tree with 
+nodes [1, 2, 3, 5, 6, 7]. The objects of those leafs would each have a tree 
+as follows:
+ * 1 has tree [3]
+ * 2 has tree [3]
+ * 3 has tree [1, 2, 5, 6, 7]
+ * 5 has tree [3]
+ * 7 has tree [3]
+ 
 */
 
 #include <iostream>
@@ -46,20 +76,15 @@ endpoint_tree *currentendblock = NULL;
 int    end_size_left;
 endpoint_tree *endfree_list = NULL;
 
-m_tree_t *get_node()
-{ 
+m_tree_t *get_node(){ 
 	m_tree_t *tmp;
-	if( free_list != NULL )
-	{  
+	if( free_list != NULL ){  
 		tmp = free_list;
 		free_list = free_list->left;
 	}
-	else
-	{ 
-		if( currentblock == NULL || size_left == 0)
-		{  
-			currentblock = 
-				(m_tree_t *) malloc( BLOCKSIZE * sizeof(m_tree_t) );
+	else{ 
+		if( currentblock == NULL || size_left == 0){  
+			currentblock = (m_tree_t *) malloc( BLOCKSIZE * sizeof(m_tree_t) );
 			size_left = BLOCKSIZE;
 		}
 		tmp = currentblock++;
@@ -68,26 +93,20 @@ m_tree_t *get_node()
 	return( tmp );
 }
 
-void return_node(m_tree_t *node)
-{  
+void return_node(m_tree_t *node){  
 	node->left = free_list;
 	free_list = node;
 }
 
-endpoint_tree *get_end_node()
-{ 
+endpoint_tree *get_end_node(){ 
 	endpoint_tree *tmp;
-	if( endfree_list != NULL )
-	{  
+	if( endfree_list != NULL ){  
 		tmp = endfree_list;
 		endfree_list = endfree_list->left;
 	}
-	else
-	{ 
-		if( currentendblock == NULL || end_size_left == 0)
-		{  
-			currentendblock = 
-				(endpoint_tree *) malloc( BLOCKSIZE * sizeof(endpoint_tree) );
+	else{ 
+		if( currentendblock == NULL || end_size_left == 0){  
+			currentendblock = (endpoint_tree *) malloc( BLOCKSIZE * sizeof(endpoint_tree) );
 			end_size_left = BLOCKSIZE;
 		}
 		tmp = currentendblock++;
@@ -142,8 +161,7 @@ void update_parameters(m_tree_t *t){
 
 
 //left rotation for the endpoint tree within the measure tree
-void endpoint_left_rotation(endpoint_tree *n)
-{  
+void endpoint_left_rotation(endpoint_tree *n){  
 	endpoint_tree *tmp_node;
 	int        tmp_key;
 	tmp_node = n->left; 
@@ -157,8 +175,7 @@ void endpoint_left_rotation(endpoint_tree *n)
 }
 
 //right rotation for the endpoint tree within the measure tree
-void endpoint_right_rotation(endpoint_tree *n)
-{  
+void endpoint_right_rotation(endpoint_tree *n){  
 	endpoint_tree *tmp_node;
 	int        tmp_key;
 	tmp_node = n->right; 
@@ -174,36 +191,37 @@ void endpoint_right_rotation(endpoint_tree *n)
 
 //pre: n is a leaf tree and not a leaf
 //post: performs a left rotatation and calls update_paramters() on the affected nodes
-void left_rotation(m_tree_t *n)
-{  m_tree_t *tmp_node;
-int       tmp_key;
-tmp_node = n->left; 
-tmp_key  = n->key;
-n->left  = n->right;        
-n->key   = n->right->key;
-n->right = n->left->right;  
-n->left->right = n->left->left;
-n->left->left  = tmp_node;
-n->left->key   = tmp_key;
-update_parameters(n->left);
-update_parameters(n);
+void left_rotation(m_tree_t *n){  
+   m_tree_t *tmp_node;
+   int       tmp_key;
+   tmp_node = n->left; 
+   tmp_key  = n->key;
+   n->left  = n->right;        
+   n->key   = n->right->key;
+   n->right = n->left->right;  
+   n->left->right = n->left->left;
+   n->left->left  = tmp_node;
+   n->left->key   = tmp_key;
+   update_parameters(n->left);
+   update_parameters(n);
 }
 
 //pre: n is a leaf tree and not a leaf
 //post: performs a right rotatation and calls update_paramters() on the affected nodes
 void right_rotation(m_tree_t *n)
-{  m_tree_t *tmp_node;
-int        tmp_key;
-tmp_node = n->right; 
-tmp_key  = n->key;
-n->right = n->left;        
-n->key   = n->left->key;
-n->left  = n->right->left;  
-n->right->left = n->right->right;
-n->right->right  = tmp_node;
-n->right->key   = tmp_key;
-update_parameters(n->right);
-update_parameters(n);
+{  
+   m_tree_t *tmp_node;
+   int        tmp_key;
+   tmp_node = n->right; 
+   tmp_key  = n->key;
+   n->right = n->left;        
+   n->key   = n->left->key;
+   n->left  = n->right->left;  
+   n->right->left = n->right->right;
+   n->right->right  = tmp_node;
+   n->right->key   = tmp_key;
+   update_parameters(n->right);
+   update_parameters(n);
 }
 
 
@@ -1134,6 +1152,11 @@ int query_length(m_tree_t *tree){
 }
 
 int main(){
+   /*
+    This is the professor's test code. Scores were either pass 
+    or fail depending on the time complexity of the program and
+    succession of the test code. 
+   */
 	int i; m_tree_t *t; ;
    printf("starting \n");
    t = create_m_tree();
