@@ -1,4 +1,5 @@
 import unittest
+
 from counting_sheep import get_sleep_number, INSOMNIA
 
 
@@ -12,7 +13,7 @@ class TestCountingSheep(unittest.TestCase):
 
     def test_get_sleep_number(self):
         test_cases = (
-            # input, # output
+            # input, output
             (0, INSOMNIA),
             (1, 10),
             (2, 90),
@@ -22,11 +23,11 @@ class TestCountingSheep(unittest.TestCase):
 
         for input_num, expected_value in test_cases:
             actual_value = get_sleep_number(input_num)
-            error_msg = "Input: {input_num} Expected: {expected_value} " \
-                "Actual: {actual_value}".format(**locals())
             try:
-                self.assertEquals(expected_value, actual_value)
+                self.assertEqual(expected_value, actual_value)
             except AssertionError:
+                error_msg = "Input: {input_num} Expected: {expected_value} " \
+                    "Actual: {actual_value}".format(**locals())
                 self.errors.append(error_msg)
 
 
