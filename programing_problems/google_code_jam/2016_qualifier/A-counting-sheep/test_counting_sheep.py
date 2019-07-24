@@ -3,7 +3,7 @@ import unittest
 from counting_sheep import get_sleep_number, INSOMNIA
 
 
-class TestCountingSheep(unittest.TestCase):
+class CountingSheepTestCase(unittest.TestCase):
     def setUp(self):
         self.errors = []
 
