@@ -17,7 +17,7 @@ class BaseTestCase(unittest.TestCase):
 
     def run_table_test(self, test_cases, test_fct):
         for test_input, expected_value in test_cases:
-            actual_value = test_fct(test_input)
+            actual_value = test_fct(*test_input)
             try:
                 self.assertEqual(expected_value, actual_value)
             except AssertionError:
@@ -39,11 +39,11 @@ class TestDijkstra(BaseTestCase):
     def test_is_string_reducable(self):
         test_cases = (
             # input, output
-            ('ik', NO),
-            ('ijk', YES),
-            ('kji', NO),
-            ('ji'*6, YES),
-            ('i'*10000, NO),
+            (('ik', 1), NO),
+            (('ijk', 1), YES),
+            (('kji', 1), NO),
+            (('ji', 6), YES),
+            (('i', 10000), NO),
         )
         self.run_table_test(test_cases, is_string_reducable)
 

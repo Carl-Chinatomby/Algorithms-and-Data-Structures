@@ -71,16 +71,114 @@ In Case #4, the string is jijijijijiji. It can be split into jij (which reduces 
 In Case #5, no matter how you choose your substrings, none of them can ever reduce to a j or a k.
 """
 import argparse
+from itertools import repeat
 
 
 NO = 'NO'
 YES = 'YES'
 
 
-def is_string_reducable(input_string):
+def reduce_string(input_string):
+    reduce_table = {
+        '1': {
+            '1': '1',
+            'i': 'i',
+            'j': 'j',
+            'k': 'k',
+        },
+        'i': {
+            '1': 'i',
+            'i': '-1',
+            'j': 'k',
+            'k': '-j',
+        },
+        'j': {
+            '1': 'j',
+            'i': '-k',
+            'j': '-1',
+            'k': 'i',
+        },
+        'k': {
+            '1': 'k',
+            'i': 'j',
+            'j': '-i',
+            'k': '-1',
+        },
+    }
+
+    value = '1'
+    for char in input_string:
+        if value[0] == '-':
+            res = reduce_table[value[-1]][char]
+            value = res[-1] if res[0] == '-' else '-' + res
+        else:
+            value = reduce_table[value][char]
+
+    return value
+
+
+def is_string_reducable(input_string, reps):
     """Returns NO or YES if string is reducable to
-    j or k based on rules specified in module docstring.
+    i, j or k based on rules specified in module docstring.
     """
+    # reps of 4 of the same thing equal 1 (large problem trick)
+    if not reps % 4:  # this always equals 1
+        return NO
+    elif reps > 4:  # min need to for the first 2 splits
+        reps = 4 + reps % 4
+
+    # get rid of some base cases
+    if len(input_string) * reps < 3 or \
+            (len(input_string) * reps == 3 and input_string != 'ijk'):
+        return NO
+
+    if len([c for c in ('i', 'j', 'k') if c in input_string]) < 2:
+        return NO
+
+    # calculate value: if not -1 fail (i*j*k == -1)
+    value = reduce_string(input_string)
+    if not reps % 2:
+        # negative value, repeated twice is cancels each other out
+        if value[0] == '-':
+            value = reduce_string(value[-1] * 2)
+        else:
+            value = reduce_string(value * 2)
+    else:
+        if value[0] == '-':
+            res = reduce_string(value[-1] * 2)
+            value = res[-1] if res[0] == '-' else '-' + res
+
+    if value != '-1':
+        return NO
+
+    # reduce value matches, check order
+    # Ok it reduces to -1, can it be split 3 ways for i, j, k?
+    desired_value = 'i'
+    value = '1'
+    chars_remaining = len(input_string) * reps
+    for strset in repeat(input_string, times=reps):
+        for char in strset:
+            chars_remaining -= 1
+            if value[0] != '-':
+                value = reduce_string(value + char)
+            else:
+                res = reduce_string(value[-1] + char)
+                value = res[-1] if res[0] == '-' else '-' + res
+
+            if value == desired_value:
+                value = '1'
+                if desired_value == 'i':
+                    desired_value = 'j'
+                elif desired_value == 'j':
+                    desired_value = 'k'
+                else:  # ijk found, the rest needs to equal 1
+                    desired_value = '1'
+                    value = '1'
+
+    if value != '1':
+        return NO
+
+    return YES
 
 
 def main(filepath):
@@ -101,8 +199,10 @@ def main(filepath):
                         i
                     )
                 )
-            output = is_string_reducable(word * reps)
+            output = is_string_reducable(word, reps)
             outfile.write('Case #{}: {}\n'.format(i, output))
+
+    return output
 
 
 if __name__ == "__main__":
