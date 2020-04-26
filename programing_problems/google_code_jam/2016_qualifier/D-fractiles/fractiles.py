@@ -103,64 +103,79 @@ from itertools import product
 IMPOSSIBLE = 'IMPOSSIBLE'
 
 
+# def get_tiles_to_reveal_gold(original_length, complexity, num_of_tiles):
+#     """
+#         :returns :set
+#             A set of the either 1 to 5 integers revealing which tiles will be
+#             needed to answer if there's a gold tile. If no such sequence exists
+#             returns a (IMPOSSIBLE,)
+
+#         :param :int original_length: The length of the original sequence
+#         :param :int complexity: The complexity of the current sequence
+#         :param :int num_of_tiles: The number of tiles that cna be revealed
+#     """
+#     # Create array of possilities
+#     # create position -> count for those L's
+#     # sort by #'s of L's, peak and remove possibilies
+#     # if possibilies == 0 return sequence
+#     # elif out of num_of tiles return impossible
+#     # else repeat
+
+#     # if original_length == 1:
+#     #     return [1]
+#     # originals = [x for x in product('GL', repeat=original_length)]
+#     # artworks = []
+#     # for original in originals:
+#     #     artwork = []
+#     #     for tile in original:
+#     #         if tile == 'G':
+#     #             artwork.extend(['G'] * original_length)
+#     #         else:
+#     #             artwork.extend(original)
+#     #     artworks.append(tuple(artwork))
+
+#     # removed = 0
+
+#     # tile_order = []
+#     # while num_of_tiles:
+#     #     l_count = [[0, -1, []] for x in range(len(artworks[0]))]
+#     #     for x in range(len(artworks[0])):
+#     #         for y in range((2 ** original_length) - removed):
+#     #             if artworks[y][x] == 'L':
+#     #                 l_count[x][0] += 1
+#     #                 l_count[x][1] = x
+#     #             else:
+#     #                 l_count[x][2].append(artworks[y])
+
+#     #     ordered_artwork = sorted(l_count, key=lambda k: k[0])
+#     #     if l_count[0][0] > 1:
+#     #         num_of_tiles -= 1
+#     #         tile_order.append(ordered_artwork[0][1] + 1)
+#     #         for artwork in ordered_artwork[0][2]:
+#     #             artworks.remove(artwork)
+#     #             removed += 1
+#     #     else:
+#     #         return tile_order
+
+#     total_len = original_length ** complexity
+#     if num_of_tiles == original_length:
+#         return [i + 1 for i in range(0, original_length)]
+
+#     return IMPOSSIBLE
+
+
 def get_tiles_to_reveal_gold(original_length, complexity, num_of_tiles):
-    """
-        :returns :set
-            A set of the either 1 to 5 integers revealing which tiles will be
-            needed to answer if there's a gold tile. If no such sequence exists
-            returns a (IMPOSSIBLE,)
+    sequence = []
+    if original_length == num_of_tiles:
+        x = 1
+        sequence.append(1)
+        for i in (1, original_length**complexity, original_length):
+            sequence.append(i + x + original_length)
+            x += 1
+        print(sequence)
+        return sequence
 
-        :param :int original_length: The length of the original sequence
-        :param :int complexity: The complexity of the current sequence
-        :param :int num_of_tiles: The number of tiles that cna be revealed
-    """
-    # Create array of possilities
-    # create position -> count for those L's
-    # sort by #'s of L's, peak and remove possibilies
-    # if possibilies == 0 return sequence
-    # elif out of num_of tiles return impossible
-    # else repeat
-
-    if original_length == 1:
-        return [1]
-    originals = [x for x in product('GL', repeat=original_length)]
-    artworks = []
-    for original in originals:
-        artwork = []
-        for tile in original:
-            if tile == 'G':
-                artwork.extend(['G'] * original_length)
-            else:
-                artwork.extend(original)
-        artworks.append(tuple(artwork))
-    print(artworks)
-
-    removed = 0
-
-    tile_order = []
-    while num_of_tiles:
-        l_count = [[0, -1, []] for x in range(len(artworks[0]))]
-        for x in range(len(artworks[0])):
-            for y in range((2 ** original_length) - removed):
-                if artworks[y][x] == 'L':
-                    l_count[x][0] += 1
-                    l_count[x][1] = x
-                else:
-                    l_count[x][2].append(artworks[y])
-
-        ordered_artwork = sorted(l_count, key=lambda k: k[0])
-        if l_count[0][0] > 1:
-            print(l_count)
-            num_of_tiles -= 1
-            tile_order.append(ordered_artwork[0][1] + 1)
-            for artwork in ordered_artwork[0][2]:
-                artworks.remove(artwork)
-                removed += 1
-        else:
-            return tile_order
-    print(tile_order)
-    return {IMPOSSIBLE}
-
+    return IMPOSSIBLE
 
 def main(filepath):
     outfile_name = filepath.replace('.in', '.out') if '.in' in filepath \
@@ -179,7 +194,7 @@ def main(filepath):
             )
             print("FINAL ANSWER {}".format(tile_seq))
             outfile.write('Case #{}: {}\n'.format(i, " ".join(
-                {str(tile) for tile in tile_seq}
+                str(tile) for tile in tile_seq
             )))
 
 

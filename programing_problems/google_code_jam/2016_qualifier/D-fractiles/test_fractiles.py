@@ -31,11 +31,11 @@ class FractilesTestCase(BaseTestCase):
     def test(self):
         test_cases = (
             # input, output
-            ((2, 3, 2), {2}),
-            ((1, 1, 1), {1}),
-            ((2, 1, 1), {IMPOSSIBLE}),
-            ((2, 1, 2), {1, 2}),
-            ((3, 2, 3), {2, 6}),
+            ((2, 3, 2), [2]),
+            ((1, 1, 1), [1]),
+            ((2, 1, 1), IMPOSSIBLE),
+            ((2, 1, 2), [1, 2]),
+            ((3, 2, 3), [2, 6]),
         )
         self.run_table_test(test_cases, get_tiles_to_reveal_gold)
 
