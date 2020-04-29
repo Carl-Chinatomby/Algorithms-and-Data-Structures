@@ -13,7 +13,35 @@ import sys
 
 # Complete the countTriplets function below.
 def count_triplets(arr, r):
-    pass
+    x_lets = 3
+    #build val->list(indexes)
+    val_indexes = {}
+    for idx, val in enumerate(arr):
+        if val_indexes.get(val):
+            val_indexes[val].append(idx)
+        else:
+            val_indexes[val] = [idx]
+
+    current_cnt = 0
+    # check indexes for triplets
+    for idx, val in enumerate(arr):
+        xlet_vals = []
+        for i in range(1, x_lets):
+            xlet_vals.append(val * (r ** i))
+
+        possible_counts = 1
+        for xval in xlet_vals:
+
+            possible_counts *= len(val_indexes.get(xval, []))
+            for validx in val_indexes.get(xval, []):
+                if idx > validx:
+                    possible_counts -= 1
+
+        current_cnt += possible_counts
+
+    return current_cnt
+
+
 
 
 if __name__ == '__main__':
