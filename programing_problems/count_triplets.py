@@ -11,7 +11,7 @@ import random
 import re
 import sys
 
-# Complete the countTriplets function below.
+
 def count_triplets(arr, r):
     x_lets = 3
     #build val->list(indexes)
