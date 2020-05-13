@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Given K sorted linked lists of size N each, merge them and print the sorted output.
 
