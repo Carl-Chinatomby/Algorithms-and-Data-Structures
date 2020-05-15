@@ -12,7 +12,7 @@ def binary_search(arr: List[int], low_idx: int, high_idx: int, num: int) -> int:
         if arr[mid_idx] == num:
             return mid_idx
         elif arr[mid_idx] > num:
-            return binary_search(arr, low_idx, mid_idx+1, num)
+            return binary_search(arr, low_idx, mid_idx-1, num)
         else:
             return binary_search(arr, mid_idx+1, high_idx, num)
 
