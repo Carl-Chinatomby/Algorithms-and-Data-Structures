@@ -32,7 +32,7 @@ def get_top_k_freq(input_str, k):
             heappushpop(min_heap, (cnt, word))
 
     # return the heap, various sorting options or manips can be done here
-    return min_heap
+    return {v:k for k, v in min_heap}
     #return sorted(min_heap, key=lambda x: (-1*x[0], x[1]))
 
 
@@ -47,11 +47,11 @@ def main():
     thousands of other Geeks
     """
     assert get_top_k_freq(input_str, 5) == {
-        'your': 3,
+        'for': 3,
         'well': 3,
         'and': 4,
         'to': 4,
-        'Geeks': 6,
+        'geeks': 6,
     }
 
 
