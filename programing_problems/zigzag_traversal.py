@@ -26,7 +26,7 @@ def zigzag_level_order(root: TreeNode) -> List[List[int]]:
                 node = queue.pop(0)
                 level_vals.append(node.val)
                 if node.left:
-                   stack.append(node.left)
+                    stack.append(node.left)
                 if node.right:
                     stack.append(node.right)
         else:
@@ -34,7 +34,7 @@ def zigzag_level_order(root: TreeNode) -> List[List[int]]:
                 node = stack.pop()
                 level_vals.append(node.val)
                 if node.left:
-                   queue.append(node.left)
+                    queue.append(node.left)
                 if node.right:
                     queue.append(node.right)
 
@@ -46,7 +46,8 @@ def zigzag_level_order(root: TreeNode) -> List[List[int]]:
 def main():
     root = TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))
     result = zigzag_level_order(root)
-    assert result == [[3], [20,9], [15,7]]
+    assert result == [[3], [20, 9], [15, 7]]
+
 
 if __name__ == "__main__":
     main()

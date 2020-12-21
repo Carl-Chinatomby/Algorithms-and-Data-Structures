@@ -2,14 +2,12 @@
 """
 k largest(or smallest) elements in an array
 Question: Write an efficient program for printing k largest elements in an array. Elements in array can be in any order.
-For example, if given array is [1, 23, 12, 9, 30, 2, 50] and you are asked for the largest 3 elements i.e., k = 3 then your program should print 50, 30 and 23.
+For example, if given array is [1, 23, 12, 9, 30, 2, 50] and you are asked for the largest 3 elements i.e., k = 3 then
+your program should print 50, 30 and 23.
 """
-from collections import defaultdict
 from heapq import (
     heapify,
     heappush,
-    heappop,
-    heapreplace,
     heappushpop,
 )
 
@@ -29,7 +27,6 @@ def get_top_k(arr, k):
 
     # return the heap, various sorting options or manips can be done here
     return sorted(min_heap, reverse=True)
-
 
 
 def main():

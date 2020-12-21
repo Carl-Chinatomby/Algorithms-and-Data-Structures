@@ -24,17 +24,17 @@ def get_children(root):
         for child in current_node.children:
             remaining_nodes.append(child)
 
-def calculate_height(root):
-    current_node = root
-    count = -1 # do not count root
+# def calculate_height(root):  # Incorrect
+#     current_node = root
+#     count = -1 # do not count root
 
-    if current_node is None:
-        return 0
+#     if current_node is None:
+#         return 0
 
-    for node in get_children(current_node):
-        count += 1
+#     for node in get_children(current_node):
+#         count += 1
 
-    return count
+#     return count
 
 def has_cycle(root):
     if not root or not root.children:
@@ -118,7 +118,7 @@ def main():
     )
 
 
-    print(calculate_height(root))
+    #print(calculate_height(root))
     print(has_cycle(root2))
 
 #main()
