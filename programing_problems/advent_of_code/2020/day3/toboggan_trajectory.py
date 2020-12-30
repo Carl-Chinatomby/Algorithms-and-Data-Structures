@@ -91,7 +91,6 @@ def get_num_of_trees(matrix, right=3, down=1):
     num_of_trees = 0
     x = 0
     col_len = len(matrix[0])
-    #for row in matrix:
     for i in range(0, len(matrix), down):
         if matrix[i][x] == '#':
             num_of_trees += 1
