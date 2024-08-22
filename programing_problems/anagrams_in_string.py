@@ -19,7 +19,7 @@ def find_anagrams(s: str, p: str) -> List[int]:
     for i in range(len(s) - len(p) + 1):
 
         # This can all be simplifed to: (but maybe that's cheating?)
-        #if set(s[i:i+len(p)]) == set(p):
+        # if set(s[i:i+len(p)]) == set(p):
         #    results.append(i)
 
         matches = True
@@ -30,6 +30,7 @@ def find_anagrams(s: str, p: str) -> List[int]:
         for key, val in char_count.items():
             if substr_count[key] != val:
                 matches = False
+                break
 
         if matches:
             results.append(i)
