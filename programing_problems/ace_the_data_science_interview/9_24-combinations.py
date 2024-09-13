@@ -3,7 +3,7 @@ Ace The Data Science Interview
 
 
 Medium Problems
-9.24. Faebook: Given an integer n and an integer k, output a list of all the combinations of k
+9.24. Facebook: Given an integer n and an integer k, output a list of all the combinations of k
 numbers chosen from 1 to n. For example, if n = 3 and k = 2, return [1, 2], [1, 3], [2, 3].
 """
 def get_combinations(n, k):
@@ -13,7 +13,7 @@ def get_combinations(n, k):
         if start > n or num >= k:
             return
 
-        for i in range(start, n+i): # iterate over every element
+        for i in range(start, n+1): # iterate over every element
             combo.append(i)
             backtrack(n, k, res, combo, num+1, i+1) # recurse
             combo.remove(i)
