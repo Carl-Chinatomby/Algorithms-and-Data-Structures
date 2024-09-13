@@ -18,10 +18,10 @@ class TreeNode:
                     yield elem
 
     def has_left_child(self):
-        return self.left_child
+        return bool(self.left_child)
 
     def has_right_child(self):
-        return self.right_child
+        return bool(self.right_child)
 
     def is_left_child(self):
         return self.parent and self.parent.left_child == self
@@ -36,7 +36,7 @@ class TreeNode:
         return not (self.right_child and self.left_child)
 
     def has_any_children(self):
-        return self.right_child or self.left_child
+        return bool(self.right_child or self.left_child)
 
     def has_both_children(self):
         return self.right_child and self.left_child
